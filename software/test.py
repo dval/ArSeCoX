@@ -7,6 +7,11 @@ print(sys.version)
 
 link = COMCore.COMCore()
 
+def xstr(s):
+    if s is None:
+        return 'None'
+    return s
+
 def testConnect():
         #get list of ports
         myPorts = link.listPorts()
@@ -26,8 +31,30 @@ def testConnect():
 
 
         #send request id message
+        #ron = link.writeMessage("hello,1,0.1")
+        #print ("Sent handshake of %d bytes." % ron)
+        # read 64 byte response
+        #rez = link.read(64).decode('utf-8')
+        rez = link.readMessage()
+        # cleanup
+        #link.close()
+        return str(rez)
+
+
+def testMethodCall():
+
+        #test connection
+        #link.open()
+
+        # check for waiting data
+        while link.connection.in_waiting:
+            rez = link.read(64).decode('utf-8')
+            print(rez)
+
+
+        #send request id message
         ron = link.writeMessage("hello,1,0.1")
-        print ("Sent handshake of %d bytes." % ron)
+        print ("Sent custom request of %d bytes." % ron)
         # read 64 byte response
         #rez = link.read(64).decode('utf-8')
         rez = link.readMessage()
@@ -46,8 +73,13 @@ print ("Expecting: Port list of n length")
 #test_portlist = tec.autoConnect()
 test_portlist = link.listPorts()
 #formatted display for list in terminal
-det = [' - '.join([str(test_portlist.index(p)+1), p.device, p.device_path, p.description,
- p.hwid, p.usb_description(), p.usb_info() ]) for p in test_portlist]
+#if linux
+#det = [' - '.join([str(test_portlist.index(p)+1), p.device, p.device_path, p.description,
+# p.hwid, p.usb_description(), p.usb_info() ]) for p in test_portlist]
+#if windows
+
+det = [' - '.join([str(test_portlist.index(p)+1), p.device, p.hwid, p.description,
+ p.hwid, xstr(p.usb_description()), p.usb_info() ]) for p in test_portlist]
 print(''+'\n'.join(map(str,det)))
 
 
@@ -56,6 +88,13 @@ print
 connectStatus = testConnect()
 print ("Expecting: Hardware response with 'callback' message.")
 print ("Response: ", connectStatus)
+
+print
+
+
+customStatus = testMethodCall()
+print ("Expecting: Hardware response with 'callback' message.")
+print ("Response: ", customStatus)
 
 print
 

@@ -79,7 +79,7 @@ class COMCore(object):
             self.connection.reset_input_buffer()
             self.connection.reset_output_buffer()
             result = "Port reset. Ready to open."
-        elif(not self.connection.is_open):
+        else:
             result = "No port is open to reset."
         return result
 

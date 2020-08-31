@@ -165,11 +165,16 @@ void loop() {
     strcpy(outgoing_packet.msg, sendBuffer);
 
   }
-  
-  if( !readInProgress && !writeInProgress){
-    // do some code here
-    writeData();
+
+  // if not currently writing, try
+  // to read. if nothing to read, 
+  // do some work, and write results.
+  if( !writeInProgress){
+    readData();
+    if( !readInProgress ){
+      // do stuff here
+      writeData();
+    }
   }
   
-  readData();
 }
